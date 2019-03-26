@@ -5,18 +5,14 @@ Created on Tue Mar 26 11:33:36 2019
 @author: ThomasTheisen
 """
 
-#A hash function is any function that can be used to map data of arbitrary
-#size onto data of a fixed size. 
-
 import numpy as np
 import math
-#import shapely
 
 class Grid():
     
     def __init__(self, l, w):
         self.grid = np.zeros((l,w))
-        
+                
 class Path():
     
     def __init__(self, moves):
@@ -56,6 +52,7 @@ class Path():
         self.chain = np.vstack((self.chain, new_position))
         self.length += 1
         
+        
 def invalid_position(position, x_lower, x_upper, y_lower, y_upper):
     h, v = position[0], position[1]
     
@@ -65,11 +62,12 @@ def invalid_position(position, x_lower, x_upper, y_lower, y_upper):
         return True
     else:
         return False
-
+    
 def generate_plane(x_lower, x_upper, y_lower, y_upper):
     p1 = np.array((0, np.random.randint(y_lower, y_upper+1)))
     p2 = np.array((x_upper, np.random.randint(y_lower, y_upper+1)))
     return p1, p2
+
 
 def distance(plane, x, y):
     pp1, pp2 = plane
@@ -90,6 +88,8 @@ def hashfunc(plane1, plane2, x, y):
         return 0
     
 
+    
+
 if __name__ == "__main__":
     g = Grid(10,10)
     p1 = Path(5)
@@ -100,6 +100,19 @@ if __name__ == "__main__":
     
     plane1 = generate_plane(0, 10, 0, 10)
     plane2 = generate_plane(0, 10, 0, 10)
+    plane3 = generate_plane(0, 10, 0, 10)
+    plane4 = generate_plane(0, 10, 0, 10)
+    plane5 = generate_plane(0, 10, 0, 10)
+    plane6 = generate_plane(0, 10, 0, 10)
+    plane7 = generate_plane(0, 10, 0, 10)
+    plane8 = generate_plane(0, 10, 0, 10)
+    plane9 = generate_plane(0, 10, 0, 10)
+    plane10 = generate_plane(0, 10, 0, 10)
+    plane11 = generate_plane(0, 10, 0, 10)
+    plane12 = generate_plane(0, 10, 0, 10)
+    plane_group1 = [plane1, plane2, plane3, plane4, plane5, plane6]
+    plane_group2 = [plane7, plane8, plane9, plane10, plane11, plane12]
     
-    print(hashfunc(plane1, plane2, p1.chain[0][0], p1.chain[0][1]))
-
+    #Both planes and points change throughout t time steps
+    for i in range(len(p1.chain)):
+        print(hashfunc(plane_group1[i], plane_group2[i], p1.chain[i][0], p1.chain[i][1]), end='')
