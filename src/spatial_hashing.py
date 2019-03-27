@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 27 12:38:11 2019
+'''
 
-@author: ThomasTheisen
-"""
+Author: Thomas Theisen
+
+Objective: Hash Spatial 2D Features using Random Planes 
+
+'''
 
 import numpy as np
 import math
@@ -32,7 +33,7 @@ class Grid():
             key = 'Path' + str(index_path)
             self.hashes[key] = []
             for index_plane, plane in enumerate(self.planes):
-                hash_value = hashfunc(path[index_plane][0], path[index_plane][1], plane)
+                hash_value = hashfunc(path[index_plane][0], path[index_plane][1], plane)    #applying one plane
                 self.hashes[key].append(hash_value)
                 
 class Path():
@@ -84,53 +85,72 @@ def distance(x, y, plane):
     n = abs(pp2[0] - pp1[0]) * (pp1[1] - y) - (pp1[0] - x) * (pp2[1] - pp1[1])
     d = math.sqrt(math.pow((pp2[0] - pp1[0]), 2) + math.pow((pp2[1] - pp1[1]),2))
     return n/d
-   
 
+def invalid_position(new_coordinate, bounds):      
+    
+    new_latitude, new_longitude = new_coordinate[0], new_coordinate[1]
+    if new_latitude < bounds[0] or new_latitude > bounds[1]:
+        return True
+    elif new_longitude < bounds[2] or new_longitude > bounds[3]:
+        return True
+    else:
+        return False
+
+def generate_random_paths(row_cells, column_cells, timesteps):
+    
+    bounds = [0, row_cells, 0, column_cells]
+    
+    path = Path()
+    
+    latitude, longitude, t = np.random.randint(row_cells), np.random.randint(row_cells), 0
+    
+    current_point = Point(latitude, longitude, t)
+           
+    valid_position = True
+    while t < timesteps:
+        while valid_position:
+            x_, y_ = np.random.randint(3), np.random.randint(3)
+            
+            if x_ == 0:
+                x_vec = -1
+            elif x_ == 1:
+                x_vec = 0
+            elif x_ == 2:
+                x_vec = 1
+                
+            if y_ == 0:
+                y_vec = -1
+            elif y_ == 1:
+                y_vec = 0
+            elif y_ == 2:
+                y_vec = 1
+                       
+            new_position = [current_point[0] + x_vec, current_point[1] + y_vec]
+            
+            valid_position= invalid_position(new_position, bounds)
+        
+        new_point = Point(new_position[0], new_position[1], t)
+        t += 1
+        path.add_point(new_point)
+        
+    return path
+
+            
 if __name__ == "__main__":
-    dim_rows = 100
-    dim_columns = 100
+    dim_rows = 5
+    dim_columns = 5
+    time_steps = 5
+    num_paths = 5
     
     grid = Grid(dim_rows, dim_columns)
-    path1 = Path()
-    path2 = Path()
-    
-    p1 = Point(1,1,0)
-    p2 = Point(1,2,1)
-    p3 = Point(1,3,2)
-    p4 = Point(2,3,3)
-    
-    p5 = Point(4,1,0)
-    p6 = Point(4,2,1)
-    p7 = Point(5,2,2)
-    p8 = Point(5,3,3)
-    
-    plane0 = Plane(dim_rows, dim_columns, 0)
-    plane1 = Plane(dim_rows, dim_columns, 1)
-    plane2 = Plane(dim_rows, dim_columns, 2)
-    plane3 = Plane(dim_rows, dim_columns, 3)
-    
-    path1.add_point(p1)
-    path1.add_point(p2)
-    path1.add_point(p3)
-    path1.add_point(p4)
-    
-    path2.add_point(p5)
-    path2.add_point(p6)
-    path2.add_point(p7)
-    path2.add_point(p8)
-    
-    grid.add_path(path1)
-    grid.add_path(path2)
-    
-    grid.add_plane(plane0)
-    grid.add_plane(plane1)
-    grid.add_plane(plane2)
-    grid.add_plane(plane3)
-    
+        
+    for _ in range(num_paths):
+        grid.add_path(generate_random_paths(dim_rows, dim_columns, time_steps))
+
+    for t in range(time_steps):
+        grid.add_plane(Plane(dim_rows, dim_columns, t))        
+        
     grid.gen_hash()
-    
-    
-    print(path1)
-    print(path2)
     print(grid.hashes)
+
         
