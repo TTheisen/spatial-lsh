@@ -2,7 +2,9 @@ import numpy as np
 
 def distance(plane, point):
     p1, p2, p3 = plane[0:2], plane[2:4], point[0:2]
-    return np.cross(p2 - p1, p1 - p3) / np.linalg.norm(p2 - p1)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        d = np.cross(p2 - p1, p1 - p3) / np.linalg.norm(p2 - p1)
+    return d
 
 def hash(point, planes):
     hash_value = []
