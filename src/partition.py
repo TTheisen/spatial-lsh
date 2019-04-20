@@ -21,6 +21,3 @@ class Partition():
 
     def get_planes(self):
         return self.planes
-        
-
-    
