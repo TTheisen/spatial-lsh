@@ -18,3 +18,6 @@ def hash(point, planes):
     h = np.array(hash_value) * func
     s = np.sum(h)
     return h, s 
+
+def convolution(hashes, padding):
+    return np.add.reduceat(hashes, np.arange(0, len(hashes), padding))
